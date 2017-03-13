@@ -11,6 +11,6 @@ Check out our webpage for more details:
 
 
 ## Installation
-This project is based on two TI examples:
+This project is based on two TI example projects:
 * Datalogger is based on the simple peripheral BLE example project - Here, you should update the files 'main.c', 'simple_peripheral.c', 'simple_peripheral.h', and add to the 'Application' folder the files 'data_service.c', 'data_service.h'
 * External data source is based on the pin interrupt example project - Here, you should replace the file 'pinInterrupt.c' with the file 'data_sender.c'
