@@ -81,7 +81,6 @@
 
 #include <ti/mw/display/Display.h>
 #include <ti/mw/extflash/ExtFlash.h>
-//#include "board_key.h"
 
 #include "board.h"
 
@@ -144,9 +143,6 @@
 // The combined overhead for L2CAP and ATT notification headers
 #define TOTAL_PACKET_OVERHEAD   7
 
-// GATT notifications for throughput example don't require an authenticated link
-#define GATT_NO_AUTHENTICATION  0
-
 // Datalogger application constants
 #define MEASURMENT_LEN          64
 #define MEASURMENT_LEN_BYTES    8           // MEASURMENT_LEN / sizeof(Char)
@@ -170,7 +166,7 @@
                                 {                        \
                                     return 0;            \
                                 }                        \
-                                temp_last_offset += len; \
+                                temp_last_offset += (y); \
                                 return (y);              \
                             }
 
@@ -1134,10 +1130,13 @@ uint32_t readChunkFlash(uint8_t *readbuf)
         {
             // reading until the maximum offset
             len = MAX_FLASH_OFFSET - last_offset;
-            res_read = ExtFlash_read(last_offset, len, readbuf);
-            if (res_read == 0)
+            if (len > 0)
             {
-                return 0;
+                res_read = ExtFlash_read(last_offset, len, readbuf);
+                if (res_read == 0)
+                {
+                    return 0;
+                }
             }
             temp_last_offset = MIN_FLASH_OFFSET;
             temp_flag_cycle = 0;
@@ -1341,7 +1340,7 @@ bool storeMeasurementFlash(uint8_t *buf)
 		    // this is the only situation where (flag_cycle == 1) && (current_offset < last_offset)
 			if (flag_cycle == 1)
 			{
-			    last_offset = current_offset;
+			    last_offset = (next_sector + 1) * SECTOR_SIZE;
 			}
 
 			flag_cycle = 1;
@@ -1349,7 +1348,7 @@ bool storeMeasurementFlash(uint8_t *buf)
 
 		if ((flag_cycle == 1) && (current_offset > last_offset))
 		{
-		    last_offset = current_offset;
+		    last_offset = (next_sector + 1) * SECTOR_SIZE;
 		}
 	}
 
@@ -1440,6 +1439,8 @@ static void Datalogger_init(void)
     ExtFlash_erase(LAST_SECTOR * SECTOR_SIZE, SECTOR_SIZE);
     current_offset = MIN_FLASH_OFFSET;
     last_offset = MIN_FLASH_OFFSET;
+    //current_offset = 0xFEFC0;
+    //last_offset = 0xFEFC0;
     flag_cycle = 0;
     memcpy(buf, &current_offset, 4);
     ExtFlash_write(CURRENT_OFFSET, 4, buf);
@@ -1448,6 +1449,7 @@ static void Datalogger_init(void)
     memcpy(buf, &flag_cycle, 1);
     ExtFlash_write(CYCLE_OFFSET, 1, buf);
     ExtFlash_erase(MIN_FLASH_OFFSET, SECTOR_SIZE);
+    //ExtFlash_erase(0xFE000, SECTOR_SIZE);
     */
 
 
@@ -1505,7 +1507,7 @@ void Datalogger_taskFxn(UArg a0, UArg a1)
 static void uartReadCallback(UART_Handle handle, void *buf, size_t count)
 {
     // Enqueue new measurement
-	measurement_t *measurmentPtr = (measurement_t *) malloc(sizeof(measurement_t));;
+	measurement_t *measurmentPtr = (measurement_t *) malloc(sizeof(measurement_t));
     memcpy(measurmentPtr->data, buf, count);
 	Queue_enqueue(measurementQueueHandle, &measurmentPtr->_elem);
 

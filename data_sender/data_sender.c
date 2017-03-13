@@ -47,12 +47,10 @@
  */
 
 /* XDCtools Header files */
-//#include <xdc/std.h>
 #include <xdc/runtime/System.h>
 
 /* BIOS Header files */
 #include <ti/sysbios/BIOS.h>
-//#include <ti/sysbios/knl/Swi.h>
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Clock.h>
@@ -66,10 +64,6 @@
 
 /* batmon */
 #include <driverlib/aon_batmon.h>
-
-//#include <stdio.h>
-//#include <math.h>
-//#include <limits.h>
 
 /* Example/Board Header files */
 #include "Board.h"
