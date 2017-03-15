@@ -6,7 +6,7 @@ Here, we demonstrate the Datalogger firmware with another chip, which measures t
 
 Check out our webpage for more details:
 
-[TBD](http://courses.cs.tau.ac.il/embedded/projects/fall2016/Datalogger/index.html)
+[http://courses.cs.tau.ac.il/embedded/projects/fall2016/Datalogger/index.html](http://courses.cs.tau.ac.il/embedded/projects/fall2016/Datalogger/index.html)
 
 
 
